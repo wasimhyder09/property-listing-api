@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBrokerRequest;
 use App\Http\Resources\BrokersResource;
 use Illuminate\Http\Request;
 use App\Models\Broker;
@@ -22,8 +23,19 @@ class BrokersController extends Controller {
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request) {
-    //
+  public function store(StoreBrokerRequest $request) {
+    $request->validated();
+
+    $broker = Broker::create([
+      'name' => $request->name,
+      'address' => $request->address,
+      'city' => $request->city,
+      'zip_code' => $request->zip_code,
+      'phone_number' => $request->phone_number,
+      'logo_path' => $request->logo_path
+    ]);
+
+    return new BrokersResource($broker);
   }
 
   /**
@@ -32,8 +44,8 @@ class BrokersController extends Controller {
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show($id) {
-    //
+  public function show(Broker $broker) {
+    return new BrokersResource($broker);
   }
 
   /**
