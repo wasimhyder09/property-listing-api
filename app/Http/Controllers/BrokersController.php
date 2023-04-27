@@ -55,8 +55,12 @@ class BrokersController extends Controller {
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id) {
-    //
+  public function update(StoreBrokerRequest $request, Broker $broker) {
+    $broker->update($request->only([
+      'name', 'address', 'city', 'zip_code', 'phone_number', 'logo_path'
+    ]));
+
+    return new BrokersResource($broker);
   }
 
   /**
@@ -65,7 +69,11 @@ class BrokersController extends Controller {
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy($id) {
-    //
+  public function destroy(Broker $broker) {
+    $broker->delete();
+    return response()->json([
+      'success' => true,
+      'message' => 'The broker has been deleted.'
+    ]);
   }
 }
