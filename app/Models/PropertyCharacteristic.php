@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class PropertyCharacteristic extends Model {
   use HasFactory;
-  protected $fillables = ['property_id', 'price', 'bedrooms', 'bathrooms', 'sqft', 'price_sqft', 'property_type', 'status'];
+  protected $fillable = ['property_id', 'price', 'bedrooms', 'bathrooms', 'sqft', 'price_sqft', 'property_type', 'status', 'broker_id'];
 }
