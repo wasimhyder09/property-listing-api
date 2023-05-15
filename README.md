@@ -1,64 +1,36 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+Notes to create an API.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+1. Make Authentication:
+  (1.1) Make AuthController using termianl.
+  (1.2) Then go to https://github.com/codewithdary/laravel-sanctum-tutorial link and copy code from app/Http/Controllers/AuthController file code in our controller.
+  (1.3) Inside App directory, create a new folder called Traits and inside that, create a new file HttpResponses.php. Then copy the code from github repo into our newly created file from same path.
+  (1.4) Create two Requests from CLI using artisan make:request, named LoginUserRequest and StoreUserRequest. Then copy the code for both files from above repo under app/Http/Requests folder.
+  (1.5) Then create routes in routes/api.php file. Create public POST routes for "/login" and "/register" and a protected POST route for "/logout". The protected route group will have a middlware named auth:sanctum.
+  (1.6) To test the authentication system, we use Postman. In Postman, Headers are set to [Accept => application/vnd.api+json] and [Content-Type => application/vnd.api+json]. Then Body will be set in x-www-form-urlencoded.
 
-## About Laravel
+2. Create Controllers:
+  (2.1) Then we need to create controllers and remove create() and edit() methods from the controllers as we don't need to show add and edit forms. All the data will be created and updated on back-end using API calls.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+3. Create Routes:
+  (3.1) We can create API routes using Route::apiResource() method which will give us all the API related routes of a controller.
+  Note: All the routes created inside routes/api.php file will automatically start with "/api" in the URL.
+  (3.2) Create public routes for show and index and for store, update and destroy, wrap them inside protected routes group using 3.1 and then chaining only() method to the routes.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. Create Resources:
+  Resources are used to map the data from controller functions and send the mapped fields in API response.
+  (4.1) Use make:resource [ControllerNameResource] command to create the resource.
+  (4.2) Inside toArray() function of resource, retun new array with key-value pairs for that controller value. Like 'id' => $this->id and so on.
+  (4.3) To use resource insid the function, use defination like this:
+        return ControllerNameResource::collection(ModelName::all()).
+  (4.4) To return a single resource, use return ControllerNameResource($newResourceVariable);
+  (4.5) For show, replace $id parameter with (ModelName $modelVariable) and return like 4.4
+  (4.6) For update, replace $id with varibales like 4.5. Then inside the method, use generice variables. For example $modelVariable->update($request->only['name1', 'name2']) etc.
+  (4.7) For delete, simply use Model->delete() and return a response()->json(['success' => true, 'message' => 'Deleted succesfully']);
+  
+5. Create Requests:
+  In order to validate the requests in a separate file, we use make:request StoreControllerNameRequest.
+  (5.1) Change authorize() to true and under rules() function, define all the rules.
+  (5.2) In cotroller, replace Request facade with newly crated request.
+  (5.3) In order to make it work, use $request->validated(); inside the controller function.
+  (5.4) To create a single request for create and update, inside request file, create new private function isPostRequest. Then get the request type using request()->isMethod('post')? 'required' : 'sometimes';
+  This way, you can replace the required attribute with the function call using "$this->isPostRequest" and it will change the values based on post or put request and will validate accordingly.
